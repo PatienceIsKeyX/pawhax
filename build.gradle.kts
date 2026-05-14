@@ -20,40 +20,29 @@ repositories {
 }
 
 dependencies {
-    // Fabric
     minecraft(libs.minecraft)
     mappings(variantOf(libs.yarn) { classifier("v2") })
     modImplementation(libs.fabric.loader)
 
-    // Meteor
     modImplementation(libs.meteor.client)
 
-    // Baritone (optional runtime dependency)
     modCompileOnly(libs.baritone)
 }
 
 tasks {
     processResources {
         val propertyMap = mapOf(
-            "version" to project.version,
+            "version"    to project.version,
             "mc_version" to libs.versions.minecraft.get()
         )
-
         inputs.properties(propertyMap)
-
         filteringCharset = "UTF-8"
-
-        filesMatching("fabric.mod.json") {
-            expand(propertyMap)
-        }
+        filesMatching("fabric.mod.json") { expand(propertyMap) }
     }
 
     jar {
         inputs.property("archivesName", project.base.archivesName.get())
-
-        from("LICENSE") {
-            rename { "${it}_${inputs.properties["archivesName"]}" }
-        }
+        from("LICENSE") { rename { "${it}_${inputs.properties["archivesName"]}" } }
     }
 
     java {
@@ -64,7 +53,5 @@ tasks {
     withType<JavaCompile> {
         options.encoding = "UTF-8"
         options.release = 21
-        options.compilerArgs.add("-Xlint:deprecation")
-        options.compilerArgs.add("-Xlint:unchecked")
     }
 }

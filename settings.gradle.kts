@@ -9,4 +9,4 @@ pluginManagement {
     }
 }
 
-rootProject.name = "pawhax"
+rootProject.name = "diagbounce"
