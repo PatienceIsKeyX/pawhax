@@ -1,0 +1,35 @@
+name: Build and Release
+
+on:
+  push:
+    branches: [diagbounce]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Build
+        run: chmod +x gradlew && ./gradlew build
+
+      - name: Get version
+        id: ver
+        run: echo "version=$(./gradlew properties -q | grep '^version:' | awk '{print $2}')" >> $GITHUB_OUTPUT
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: diagbounce-${{ steps.ver.outputs.version }}
+          name: DiagBounce ${{ steps.ver.outputs.version }}
+          files: build/libs/diagbounce-*.jar
+          generate_release_notes: false
